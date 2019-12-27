@@ -68,6 +68,9 @@ class DeploymentView(BaseView):
     @action_logging
     def deploy(self):
 
+        if self.repo is None:
+            self.repo = Repo(conf.get("core", "dags_folder"))
+
         new_branch = request.form.get("git_branches")
         new_local_branch = new_branch.replace("origin/", "")
 
