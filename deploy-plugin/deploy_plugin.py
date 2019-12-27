@@ -1,13 +1,13 @@
 import os
 from datetime import datetime
 
-import git
 from airflow import conf
 from airflow.plugins_manager import AirflowPlugin
 from airflow.www_rbac.decorators import action_logging
 from flask import render_template, flash, redirect, request
 from flask_appbuilder import BaseView, has_access, expose
 from flask_wtf import FlaskForm
+from git import Repo
 from git.cmd import GitCommandError
 from wtforms.fields import SelectField
 
@@ -15,7 +15,7 @@ from wtforms.fields import SelectField
 class DeploymentView(BaseView):
     plugins_folder = conf.get("core", "plugins_folder")
     template_folder = os.path.join(plugins_folder, "deploy-plugin")
-    repo = git.Repo(conf.get("core", "dags_folder"))
+    repo = None
     route_base = "/deployment"
 
     def render(self, template, **context):
@@ -30,6 +30,10 @@ class DeploymentView(BaseView):
     @has_access
     @action_logging
     def list(self):
+
+        if self.repo is None:
+            self.repo = Repo(conf.get("core", "dags_folder"))
+
         title = "Deployment"
         data = dict()
         remotes = list()
