@@ -59,8 +59,9 @@ class DeploymentView(BaseView):
         ]
         allowed_branches = conf.get("deploy", "allowed_branches", fallback=None)
         if allowed_branches:
+
             remote_branches = [
-                brn for brn in allowed_branches if brn in allowed_branches
+                brn for brn in remote_branches if brn in allowed_branches.split(",")
             ]
 
         form = GitBranchForm()
