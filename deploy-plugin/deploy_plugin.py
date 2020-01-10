@@ -57,6 +57,11 @@ class DeploymentView(BaseView):
         remote_branches = [
             ref.name for ref in self.repo.remotes.origin.refs if "HEAD" not in ref.name
         ]
+        allowed_branches = conf.get("deploy", "allowed_branches", fallback=None)
+        if allowed_branches:
+            remote_branches = [
+                brn for brn in allowed_branches if brn in allowed_branches
+            ]
 
         form = GitBranchForm()
         form.git_branches.choices = [(brn, brn) for brn in remote_branches]
